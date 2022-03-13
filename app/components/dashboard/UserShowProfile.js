@@ -44,7 +44,7 @@ export default function UserShowProfile(prop) {
         });
     }
    
-    console.log("available" , userData);
+    console.log("availa ble" , userData);
    const handleChange = () =>{
        prop.handleChange();
    }

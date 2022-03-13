@@ -33,7 +33,7 @@ export default function Dashboard() {
                 let usersArray = [] ; 
 
                 for (var prop in snapOfdata) {
-                   console.log("No data available" , snapOfdata[prop]);
+                   console.log("No data availab le" , snapOfdata[prop]);
                    usersArray.push(snapOfdata[prop])
                 }  
                 setPfrofiles(usersArray) ; 

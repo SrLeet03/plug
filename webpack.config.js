@@ -16,7 +16,7 @@ module.exports = {
             {test : /\.(js)$/, use:'babel-loader'},
             {test : /\.css$/, use:['style-loader', 'css-loader']},
              {
-                test: /\.(js|jsx)$/,
+                test: /\.(js|jsx)$/, 
                 exclude: /node_modules/,
                 use: ['babel-loader', 'eslint-loader'] // include eslint-loader
               }
@@ -25,8 +25,6 @@ module.exports = {
     mode:'development',
     devServer: {
         historyApiFallback: true,
-        inline: false,
-        contentBase: "./dist",
       },    
     plugins : [
         new HtmlWebpackPlugin ({
