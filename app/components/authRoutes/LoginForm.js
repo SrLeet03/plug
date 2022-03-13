@@ -118,14 +118,31 @@ export default function LoginForm() {
                 status: 'Hi there,you are using plug!'
             });
             console.log('registration done');
+            registerUser1(userId , user)
             history.push("/dashboard");
         } catch {
             console.log('err');
         }
+
+
     }
 
 
+    const registerUser1 = (userId, user) => {
 
+        const db = getDatabase();
+      
+        try {
+            set(ref(db, 'users/' + user.email), {
+                id: userId,
+            });
+            console.log('registration done');
+            history.push("/dashboard");
+        } catch(err) {
+            console.log('err -----' , err);
+        }
+
+    }
     return (
         < div className='wrap-login'>
 

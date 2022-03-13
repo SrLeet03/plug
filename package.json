@@ -20,6 +20,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.19.1",
+    "eslint-loader": "^4.0.2",
     "firebase": "^9.6.8",
     "firebase-tools": "^10.2.2",
     "react": "^17.0.2",
