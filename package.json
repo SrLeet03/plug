@@ -1,0 +1,44 @@
+{
+  "name": "plug",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack-dev-server --open"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "antd": "^4.19.1",
+    "firebase": "^9.6.8",
+    "firebase-tools": "^10.2.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-firebase-hooks": "^5.0.3",
+    "react-redux": "^7.2.6",
+    "react-router-dom": "^5.3.0",
+    "redux": "^4.1.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.7.1",
+    "html-webpack-plugin": "^5.5.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.4"
+  }
+}
