@@ -17,7 +17,6 @@ export default function UserShowProfile(prop) {
 
     useEffect(() => {
         const userId = localStorage.getItem('userid');
-        console.log('hdh' , userId)
         fetchUser(userId);
     }, []);
 
@@ -31,7 +30,6 @@ export default function UserShowProfile(prop) {
         const dbRef = ref(getDatabase());
         get(child(dbRef, `users/${userId}`)).then((snapshot) => {
             if (snapshot.exists()) {
-                console.log(" available" , snapshot.val());
 
               setUserData(snapshot.val())
               prop.helper(snapshot.val())

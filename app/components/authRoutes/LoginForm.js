@@ -41,13 +41,11 @@ export default function LoginForm() {
 
     function gAuth() {
 
-        console.log('Received values of form: ');
 
         const auth = getAuth(app);
         signInWithPopup(auth, provider)
             .then((result) => {
 
-                console.log('g result', result)
 
                 // This gives you a Google Access Token. You can use it to access the Google API.
                 const credential = GoogleAuthProvider.credentialFromResult(result);
@@ -64,7 +62,6 @@ export default function LoginForm() {
                         console.log("faild to check status")
                     });
 
-                console.log('g result', credential)
 
                 // ...
             }).catch((error) => {
@@ -118,7 +115,7 @@ export default function LoginForm() {
                 status: 'Hi there,you are using plug!'
             });
             console.log('registration done');
-            registerUser1(userId , user)
+            registerUser1(userId, user)
             history.push("/dashboard");
         } catch {
             console.log('err');
@@ -131,15 +128,15 @@ export default function LoginForm() {
     const registerUser1 = (userId, user) => {
 
         const db = getDatabase();
-      
+
         try {
             set(ref(db, 'users/' + user.email), {
                 id: userId,
             });
             console.log('registration done');
             history.push("/dashboard");
-        } catch(err) {
-            console.log('err -----' , err);
+        } catch (err) {
+            console.log('err -----', err);
         }
 
     }

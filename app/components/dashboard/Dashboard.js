@@ -6,37 +6,52 @@ import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { auth, db } from '../../firebase/firebase'
 import { ref, child, get, getDatabase } from "firebase/database";
-import {  set , update  , push } from "firebase/database";
-
+import { set, update, push } from "firebase/database";
+import ListProfile from './ListProfile'
 export default function Dashboard() {
 
 
     const [Profiles, setPfrofiles] = useState([])
-    const [userPhoto , setUserphoto] = useState({})
-    const [tabFlag , setTabflag]  = useState(false) ; 
+    const [userPhoto, setUserphoto] = useState({})
+    const [tabFlag, setTabflag] = useState(false);
 
     const stateProfile = useSelector((state) => state)
     const dispatch = useDispatch();
 
     useEffect(() => {
         fetchUsers();
-        
+
     }, []);
+
+    function compare(a, b) {
+        if (a.likes < b.likes) {
+            return -1;
+        }
+        if (a.likes > b.likes) {
+            return 1;
+        }
+        return 0;
+    }
 
 
     const fetchUsers = () => {
         const dbRef = ref(getDatabase());
         get(child(dbRef, `users/`)).then((snapshot) => {
             if (snapshot.exists()) {
-                console.log("No data snap" , snapshot);
-                const snapOfdata = snapshot.val() ; 
-                let usersArray = [] ; 
+                const snapOfdata = snapshot.val();
+                let usersArray = [];
 
                 for (var prop in snapOfdata) {
-                   console.log("No data availab le" , snapOfdata[prop]);
-                   usersArray.push(snapOfdata[prop])
-                }  
-                setPfrofiles(usersArray) ; 
+                    let newObj = snapOfdata[prop];
+                    newObj['userId'] = prop;
+                    usersArray.push(newObj)
+                }
+                usersArray.sort(compare);
+                usersArray.reverse();
+
+                console.log('final', usersArray);
+
+                setPfrofiles(usersArray);
             } else {
                 console.log("No data available");
             }
@@ -45,46 +60,18 @@ export default function Dashboard() {
         });
     }
 
-    const setPhotoHelper = (data) =>{
-         setUserphoto(data)
+    const setPhotoHelper = (data) => {
+        setUserphoto(data)
     }
 
-    const handleChange = () =>{
+    const handleChange = () => {
         setTabflag(true);
     }
-    const handleChange1 = () =>{
+    const handleChange1 = () => {
         setTabflag(false);
     }
 
-    const handleLikeChange = (data) =>{
-        
-        // const userId = localStorage.getItem('userid')
-        
-        
-        // const postData = {
-        //     username: data.username,
-        //     profile_picture : data.profile_picture,
-        //     status:data.status,
-        //     likes : data.likes+1,
-        //     disLikes:data.disLikes,
-        //     email : data.email
-        //  };
-        
-        //   // Get a key for a new Post.
-        //   const newPostKey = push(child(ref(db), 'posts')).key;
-        
-        //   // Write the new post's data simultaneously in the posts list and the user's post list.
-        //   const updates = {};
-        //   updates['/users/' + userId] = postData;
-        
-        //   try{
-        //     update(ref(db), updates);
-        //   }catch{
-        //     console.log('error')
-        //   }
 
-
-    }
 
 
     return (
@@ -130,28 +117,17 @@ export default function Dashboard() {
 
                 <section>
                     {
-                   
-                     tabFlag === true ?    <UserUpdateprofile original = {userPhoto} handleChange1={handleChange1}/> : 
-                     <UserShowProfile helper = {setPhotoHelper} handleChange={handleChange}/>
+
+                        tabFlag === true ? <UserUpdateprofile original={userPhoto} handleChange1={handleChange1} /> :
+                            <UserShowProfile helper={setPhotoHelper} handleChange={handleChange} />
                     }
                     <div class="row">
                         {
                             Profiles.map((data, ind) => {
-                                console.log('data . data' , data)
+                                const id = localStorage.getItem('userid');
+                                if (id === data.userId) return ""
                                 return (
-                                    <div class="col-md-4">
-                                        <div class="card-content">
-                                            <div class="card-img">
-                                                <img src={data.profile_picture} alt="" />
-                                            </div>
-                                            <div class="card-desc">
-                                                <h3>{data.username}</h3>
-                                                <p>{data.status}</p>
-                                                <button onClick={handleLikeChange(data)} class="btn-card">Like</button>{' '}
-                                                <button class="btn-card">DisLike</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <ListProfile data={data} />
                                 )
                             })
                         }
