@@ -7,22 +7,37 @@ import { useDispatch } from 'react-redux'
 import { auth, db } from '../../firebase/firebase'
 import { ref, child, get, getDatabase } from "firebase/database";
 import { set, update, push } from "firebase/database";
+import { Pagination } from 'antd';
+import { Redirect, useHistory } from 'react-router-dom'
+import {LoadingOutlined } from '@ant-design/icons';
+
 import ListProfile from './ListProfile'
 export default function Dashboard() {
 
 
     const [Profiles, setPfrofiles] = useState([])
+    const [showProfiles, setshowPfrofiles] = useState([])
+    const [size, setSize] = useState(0)
+    const [state , setSate] = useState(false) ; 
+
     const [userPhoto, setUserphoto] = useState({})
     const [tabFlag, setTabflag] = useState(false);
+    const [divine, setDivine] = useState(true);
 
     const stateProfile = useSelector((state) => state)
     const dispatch = useDispatch();
 
     useEffect(() => {
         fetchUsers();
-
     }, []);
 
+
+    const history = useHistory();
+
+     const onLike = () =>{
+        setDivine( true) 
+        console.log('kj' , divine)
+     }
     function compare(a, b) {
         if (a.likes < b.likes) {
             return -1;
@@ -50,8 +65,10 @@ export default function Dashboard() {
                 usersArray.reverse();
 
                 console.log('final', usersArray);
-
+                setSize((usersArray.length+2)/3 ) ; 
+                setshowPfrofiles(usersArray.slice(0 , 3)) ; 
                 setPfrofiles(usersArray);
+
             } else {
                 console.log("No data available");
             }
@@ -72,43 +89,50 @@ export default function Dashboard() {
     }
 
 
+    const handlePageClick = (pageNumber) => {
+        console.log('clicked' , pageNumber);
+        let page = (pageNumber-1)*3 ; 
+        setshowPfrofiles(Profiles.slice(page , page+3)) ;
+    }
+
 
 
     return (
         <div>
-            <header class="fixed-header" role="banner">
-                <div class="container-fluid">
+            
+            <header className="fixed-header" role="banner">
+                <div className="container-fluid">
 
-                    <div class="site-title col-xs-3">
+                    <div className="site-title col-xs-3">
                         <h1> Welcome to Plug ,{userPhoto.username} </h1>
                     </div>
 
-                    <div class="top-components col-xs-3 pull-right">
+                    <div className="top-components col-xs-3 pull-right">
                     </div>
                 </div>
             </header>
 
-            <menu id="user" class="dynamicMenu">
+            <menu id="user" className="dynamicMenu">
 
-                <div class="user-profile">
-                    <div class="profile-pic">
+                <div className="user-profile">
+                    <div className="profile-pic">
                         <img src={userPhoto.profile_picture} alt="username here" />
                     </div>
 
-                    <div class="user-info">
-                        <div class="username">
+                    <div className="user-info">
+                        <div className="username">
                             <p><strong>{userPhoto.username}</strong> </p>
                         </div>
-                        <ul class="profile-menu">
-                            <li><a href="/directory"><span class="glyphicon glyphicon-list-alt" title="Directory Phonebook"></span></a></li>
-                            <li><a href="/help?topic=index"><span class="glyphicon glyphicon-question-sign" title="Help"></span></a></li>
-                            <li><a href="#"><span class="glyphicon glyphicon-cog" title="Settings"></span></a></li>
-                            <li><a href="/login"><span class="glyphicon glyphicon-log-out" title="Log Out / End Session"></span></a></li>
+                        <ul className="profile-menu">
+                            <li><a href="/directory"><span className="glyphicon glyphicon-list-alt" title="Directory Phonebook"></span></a></li>
+                            <li><a href="/help?topic=index"><span className="glyphicon glyphicon-question-sign" title="Help"></span></a></li>
+                            <li><a href="#"><span className="glyphicon glyphicon-cog" title="Settings"></span></a></li>
+                            <li><a href="/login"><span className="glyphicon glyphicon-log-out" title="Log Out / End Session"></span></a></li>
                         </ul>
                     </div>
                 </div>
 
-                <ul class="admin-menu">
+                <ul className="admin-menu">
                     <li> <a href="#"> Link Examples </a></li>
                 </ul>
             </menu>
@@ -121,13 +145,16 @@ export default function Dashboard() {
                         tabFlag === true ? <UserUpdateprofile original={userPhoto} handleChange1={handleChange1} /> :
                             <UserShowProfile helper={setPhotoHelper} handleChange={handleChange} />
                     }
-                    <div class="row">
+                   {
+                     state === true  ? <div className="loader"> serggggggggggggggggg <LoadingOutlined/></div>:""
+                   }
+                    <div className="row">
                         {
-                            Profiles.map((data, ind) => {
+                            showProfiles.map((data, ind) => {
                                 const id = localStorage.getItem('userid');
                                 if (id === data.userId) return ""
                                 return (
-                                    <ListProfile data={data} />
+                                    <ListProfile data={data} cng = {onLike} />
                                 )
                             })
                         }
@@ -138,7 +165,12 @@ export default function Dashboard() {
 
 
                 </section>
-
+                <Pagination defaultCurrent={1} total={70}
+                size="large"
+                // showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} items`}
+                onChange={(e)=>handlePageClick(e)} 
+                showSizeChanger={false}
+                />
             </main>
         </div>
     )

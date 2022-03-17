@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect , useState } from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './css/loginForm.css';
@@ -24,6 +24,7 @@ export default function LoginForm() {
 
     const onFinish = values => {
         console.log('Received values of form: ', values);
+        fetchuser();
     };
 
     useEffect(() => {
@@ -33,6 +34,8 @@ export default function LoginForm() {
     const dispatch = useDispatch();
     const { getProfile } = bindActionCreators(actionCreators, dispatch);
 
+    const [ username , setUsername ] = useState('')
+    const [ pass , setPass ] = useState('')
 
 
     const provider = new GoogleAuthProvider();
@@ -94,7 +97,7 @@ export default function LoginForm() {
 
                 setTimeout(() => {
                     history.push("/dashboard");
-                }, 3000);
+                }, 1000);
             }
         }).catch((error) => {
             console.error(error);
@@ -112,11 +115,10 @@ export default function LoginForm() {
                 profile_picture: user.photoURL,
                 likes: 0,
                 disLikes: 0,
-                status: 'Hi there,you are using plug!'
+                status: 'Hi there,you are using plug!',
+                pass : pass
             });
             console.log('registration done');
-            registerUser1(userId, user)
-            history.push("/dashboard");
         } catch {
             console.log('err');
         }
@@ -124,22 +126,113 @@ export default function LoginForm() {
 
     }
 
+    const checkUserstatusforAnom = async ( user) => {
+        const dbRef = ref(getDatabase(app));
 
-    const registerUser1 = (userId, user) => {
+        const userId = generateId(username);
 
+        get(child(dbRef, `users/${userId}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                      
+                if(snapshot.val().pass !== pass){
+                   alert('Enter a valid password for this email id')
+                   return;
+                }
+                
+
+                localStorage.setItem('userid', userId);
+                history.push("/dashboard");
+                // console.log("user already there", snapshot , snapshot.val());
+            } else {
+                console.log("No data available");
+
+                registerUserAnom( user);
+                localStorage.setItem('userid', userId);
+
+                setTimeout(() => {
+                    history.push("/dashboard");
+                }, 1000);
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+
+    }
+
+
+    const fetchuser = async (sitename) => {
+        
+        const url = 'https://randomuser.me/api/';
+    
+    
+    
+        const requestOptions = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Connection": "keep-alive",
+          },
+        };
+    
+        return fetch(url, requestOptions)
+          .then((res)=>res.json())
+          .then((res) => {
+           
+            // console.log("results==== , ", res);
+            checkUserstatusforAnom( res )
+          })
+          .catch((err) => {
+              alert('failed to get you logged in')
+            console.log("error", err);
+          })
+    
+          
+        
+        }
+    
+
+    const registerUserAnom = (res) => {
+        
+        let user = res.results[0]; 
+
+        const userId = generateId(username);
         const db = getDatabase();
 
         try {
-            set(ref(db, 'users/' + user.email), {
-                id: userId,
+            set(ref(db, 'users/' + userId), {
+                username: user.name.first + " "+user.name.last,
+                email: username,
+                profile_picture: user.picture.medium,
+                likes: 0,
+                disLikes: 0,
+                status: 'Hi there,you are using plug!',
+                pass : pass
             });
             console.log('registration done');
+            localStorage.setItem('userid', userId);
             history.push("/dashboard");
-        } catch (err) {
-            console.log('err -----', err);
+
+        } catch(e) {
+            console.log('err' , e);
+            alert('failed to get you logged in')
         }
 
+
+      }
+
+
+
+    const generateId = (str)=>{
+         let ret = ""
+         for(var i = 0;i<str.length ; i++){
+              if(str[i] !=='@'&&str[i] !=='.'){
+                  ret+=str[i];
+              }
+         }
+         return ret ;
     }
+
     return (
         < div className='wrap-login'>
 
@@ -179,7 +272,10 @@ export default function LoginForm() {
                         },
                     ]}
                 >
-                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+                    <Input prefix={<UserOutlined className="site-form-item-icon" />}
+                     placeholder="Username" 
+                     onChange={(e)=>{setUsername(e.target.value) }}
+                     />
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -193,6 +289,7 @@ export default function LoginForm() {
                     <Input
                         prefix={<LockOutlined className="site-form-item-icon" />}
                         type="password"
+                        onChange={(e)=>{setPass(e.target.value) }}
                         placeholder="Password"
                     />
                 </Form.Item>
@@ -210,7 +307,6 @@ export default function LoginForm() {
                     <Button type="primary" htmlType="submit" className="login-form-button">
                         Log in
                     </Button>
-                    Or <a href="">register now!</a>
                 </Form.Item>
             </Form>
         </div>

@@ -42,7 +42,6 @@ export default function UserShowProfile(prop) {
         });
     }
    
-    console.log("availa ble" , userData);
    const handleChange = () =>{
        prop.handleChange();
    }
@@ -76,7 +75,8 @@ export default function UserShowProfile(prop) {
             <br/><br/>
 
             <Button style={{marginLeft:'40%'}} onClick={handleChange} type="primary">Update Profile</Button>
-
+            <br/>
+            <br/>
             <h2>User's Profiles</h2>
         </div>
     )

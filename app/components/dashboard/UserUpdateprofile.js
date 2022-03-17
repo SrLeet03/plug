@@ -33,7 +33,8 @@ export default function UserUpdateprofile({ original, handleChange1 }) {
             status: userStatus,
             likes: original.likes,
             disLikes: original.disLikes,
-            email: original.email
+            email: original.email,
+            pass : original.pass
         };
 
         // Get a key for a new Post.
